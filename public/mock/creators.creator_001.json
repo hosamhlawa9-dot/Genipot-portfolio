@@ -1,0 +1,15 @@
+{
+  "id": "creator_001",
+  "name": "Yasmine El Idrissi",
+  "handle": "yasmine_idrissi",
+  "location": "Casablanca, Morocco",
+  "bio": "High-energy lifestyle and tech content creator specializing in authentic brand storytelling for Gen-Z and Millennial audiences.",
+  "avatar": "https://lh3.googleusercontent.com/aida-public/AB6AXuAginnejXuc8FSwdzS5sgt5IxiOEO05NSbYLaYNHuCHmG47k3FY2tVJY-EsynSMFwPvemF-w9OIRmyZ8sNhyjQS-GttppDjvTFlu9stfnP89iRr-rK_CWDeg-GqkOt8JCfQOwcwVzkyli5mYPS85-HFQ0BjbE-cnqBLuHiXVcDN4n0AfFlz3Nuun6yd-P-jsCDOeCyFynnTYBwnHC9ijpm3kXGLTQrMVSub6qfg5BlQMVjDakGr8wY7jIQnLUYJfNN1dEPb76hlSaz6",
+  "niche": "Tech & Lifestyle",
+  "audience": "Gen Z / Millennial",
+  "memberSince": "2023",
+  "platforms": [
+    { "name": "TikTok", "followers": 450000 },
+    { "name": "Instagram", "followers": 120000 }
+  ]
+}

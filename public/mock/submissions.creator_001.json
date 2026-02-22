@@ -1,0 +1,86 @@
+[
+  {
+    "id": "sub_001",
+    "campaignId": "camp_001",
+    "campaignName": "Inwi 5G Launch",
+    "platform": "TikTok",
+    "views": 890000,
+    "earnings": 4200,
+    "thumbnail": "https://images.unsplash.com/photo-1518770660439-4636190af475?w=400&h=300&fit=crop",
+    "title": "Day in my life as a Tech Girl",
+    "submittedAt": "2024-01-20",
+    "status": "approved"
+  },
+  {
+    "id": "sub_002",
+    "campaignId": "camp_001",
+    "campaignName": "Inwi 5G Launch",
+    "platform": "TikTok",
+    "views": 340000,
+    "earnings": 1800,
+    "thumbnail": "https://images.unsplash.com/photo-1555774698-0b77e0d5fac6?w=400&h=300&fit=crop",
+    "title": "5G Speed Test in Casablanca",
+    "submittedAt": "2024-01-28",
+    "status": "approved"
+  },
+  {
+    "id": "sub_003",
+    "campaignId": "camp_002",
+    "campaignName": "Marjane Summer",
+    "platform": "Instagram",
+    "views": 450000,
+    "earnings": 2800,
+    "thumbnail": "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400&h=300&fit=crop",
+    "title": "Smart Home Automation Tour",
+    "submittedAt": "2024-03-15",
+    "status": "approved"
+  },
+  {
+    "id": "sub_004",
+    "campaignId": "camp_002",
+    "campaignName": "Marjane Summer",
+    "platform": "Instagram",
+    "views": 112000,
+    "earnings": 900,
+    "thumbnail": "https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=400&h=300&fit=crop",
+    "title": "Summer Essentials Haul",
+    "submittedAt": "2024-03-22",
+    "status": "approved"
+  },
+  {
+    "id": "sub_005",
+    "campaignId": "camp_003",
+    "campaignName": "Moulinex Morocco",
+    "platform": "TikTok",
+    "views": 312000,
+    "earnings": 1500,
+    "thumbnail": "https://images.unsplash.com/photo-1556909172-54557c7e4fb7?w=400&h=300&fit=crop",
+    "title": "Top 5 Gadgets for Gen-Z",
+    "submittedAt": "2024-05-12",
+    "status": "approved"
+  },
+  {
+    "id": "sub_006",
+    "campaignId": "camp_003",
+    "campaignName": "Moulinex Morocco",
+    "platform": "TikTok",
+    "views": 48000,
+    "earnings": 600,
+    "thumbnail": "https://images.unsplash.com/photo-1556909190-decab6e3e159?w=400&h=300&fit=crop",
+    "title": "Cooking with Moulinex",
+    "submittedAt": "2024-05-20",
+    "status": "approved"
+  },
+  {
+    "id": "sub_007",
+    "campaignId": "camp_004",
+    "campaignName": "Atay Challenge",
+    "platform": "Instagram",
+    "views": 95000,
+    "earnings": 1200,
+    "thumbnail": "https://images.unsplash.com/photo-1556679343-c7306c1976bc?w=400&h=300&fit=crop",
+    "title": "Moroccan Tea Ritual",
+    "submittedAt": "2024-09-10",
+    "status": "approved"
+  }
+]

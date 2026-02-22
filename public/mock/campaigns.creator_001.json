@@ -1,0 +1,46 @@
+[
+  {
+    "id": "camp_001",
+    "name": "Inwi 5G Launch",
+    "brand": "Inwi",
+    "platform": "TikTok",
+    "type": "Creative",
+    "status": "completed",
+    "budget": 25000,
+    "startDate": "2024-01-10",
+    "endDate": "2024-02-10"
+  },
+  {
+    "id": "camp_002",
+    "name": "Marjane Summer",
+    "brand": "Marjane",
+    "platform": "Instagram",
+    "type": "Sound",
+    "status": "completed",
+    "budget": 15000,
+    "startDate": "2024-03-01",
+    "endDate": "2024-04-01"
+  },
+  {
+    "id": "camp_003",
+    "name": "Moulinex Morocco",
+    "brand": "Moulinex",
+    "platform": "TikTok",
+    "type": "Creative",
+    "status": "completed",
+    "budget": 20000,
+    "startDate": "2024-05-01",
+    "endDate": "2024-06-01"
+  },
+  {
+    "id": "camp_004",
+    "name": "Atay Challenge",
+    "brand": "Lipton",
+    "platform": "Instagram",
+    "type": "Creative",
+    "status": "active",
+    "budget": 30000,
+    "startDate": "2024-09-01",
+    "endDate": "2024-10-15"
+  }
+]
