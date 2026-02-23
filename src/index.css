@@ -1,8 +1,4 @@
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
+* { margin: 0; padding: 0; box-sizing: border-box; }
 
 :root {
   --lime: #aaff00;
@@ -10,22 +6,18 @@
   --forest-light: #1a3a1a;
   --mint: #E8F5C8;
   --white: #ffffff;
-  --gray: #6b7280;
-  --dark-card: #1a3a1a;
 }
 
 body {
   font-family: 'Inter', sans-serif;
-  background-color: var(--forest);
+  background: var(--forest);
   color: var(--white);
   overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
 }
 
 /* Ticker animation */
-.ticker-wrap {
-  overflow: hidden;
-  white-space: nowrap;
-}
+.ticker-wrap { overflow: hidden; white-space: nowrap; }
 .ticker-content {
   display: inline-block;
   animation: ticker 30s linear infinite;
@@ -35,33 +27,13 @@ body {
   100% { transform: translateX(-50%); }
 }
 
-/* Rotated hero card */
-.rotated-card {
-  transform: rotate(-3deg);
+/* Bounce for floating card */
+@keyframes float-bounce {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
 }
 
 /* Scrollbar */
 ::-webkit-scrollbar { width: 6px; }
 ::-webkit-scrollbar-track { background: var(--forest); }
 ::-webkit-scrollbar-thumb { background: var(--lime); border-radius: 3px; }
-
-/* Transition helpers */
-.hover-scale {
-  transition: transform 0.2s ease;
-}
-.hover-scale:hover {
-  transform: scale(1.03);
-}
-
-/* Modal overlay */
-.modal-overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.75);
-  backdrop-filter: blur(4px);
-  z-index: 50;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 1rem;
-}

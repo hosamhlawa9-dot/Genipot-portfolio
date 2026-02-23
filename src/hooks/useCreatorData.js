@@ -1,12 +1,5 @@
 import { useState, useEffect } from 'react';
 
-/**
- * Custom hook that fetches all creator data from mock JSON files
- * and computes derived performance stats from submissions.
- *
- * Architecture decision: All stat computation lives here, not in components.
- * This keeps components purely presentational and makes logic testable.
- */
 export function useCreatorData(creatorId) {
   const [creator, setCreator] = useState(null);
   const [campaigns, setCampaigns] = useState([]);
@@ -18,13 +11,12 @@ export function useCreatorData(creatorId) {
   useEffect(() => {
     if (!creatorId) return;
 
-    // Check localStorage cache first (bonus feature)
+    // localStorage cache (5 min TTL)
     const cacheKey = `geniepot_${creatorId}`;
-    const cached = localStorage.getItem(cacheKey);
-    if (cached) {
-      try {
+    try {
+      const cached = localStorage.getItem(cacheKey);
+      if (cached) {
         const { data, timestamp } = JSON.parse(cached);
-        // Cache valid for 5 minutes
         if (Date.now() - timestamp < 5 * 60 * 1000) {
           setCreator(data.creator);
           setCampaigns(data.campaigns);
@@ -33,32 +25,28 @@ export function useCreatorData(creatorId) {
           setLoading(false);
           return;
         }
-      } catch (_) {}
-    }
+      }
+    } catch (_) {}
 
     const fetchAll = async () => {
       try {
         setLoading(true);
         setError(null);
 
-        // Simulate API calls using fetch to /mock/*.json
-        const [creatorRes, campaignsRes, submissionsRes] = await Promise.all([
+        const [cRes, campRes, subRes] = await Promise.all([
           fetch(`/mock/creators.${creatorId}.json`),
           fetch(`/mock/campaigns.${creatorId}.json`),
           fetch(`/mock/submissions.${creatorId}.json`),
         ]);
 
-        if (!creatorRes.ok) throw new Error(`Creator not found (${creatorRes.status})`);
-        if (!campaignsRes.ok) throw new Error(`Campaigns not found (${campaignsRes.status})`);
-        if (!submissionsRes.ok) throw new Error(`Submissions not found (${submissionsRes.status})`);
+        if (!cRes.ok) throw new Error('Creator not found');
+        if (!campRes.ok) throw new Error('Campaigns not found');
+        if (!subRes.ok) throw new Error('Submissions not found');
 
         const [creatorData, campaignsData, submissionsData] = await Promise.all([
-          creatorRes.json(),
-          campaignsRes.json(),
-          submissionsRes.json(),
+          cRes.json(), campRes.json(), subRes.json(),
         ]);
 
-        // Cache in localStorage
         localStorage.setItem(cacheKey, JSON.stringify({
           data: { creator: creatorData, campaigns: campaignsData, submissions: submissionsData },
           timestamp: Date.now(),
@@ -69,7 +57,7 @@ export function useCreatorData(creatorId) {
         setSubmissions(submissionsData);
         setStats(computeStats(submissionsData));
       } catch (err) {
-        setError(err.message || 'Failed to load creator data');
+        setError(err.message || 'Failed to load data');
       } finally {
         setLoading(false);
       }
@@ -81,41 +69,36 @@ export function useCreatorData(creatorId) {
   return { creator, campaigns, submissions, stats, loading, error };
 }
 
-/**
- * Computes all derived performance stats from submissions array.
- * Stats are NEVER hardcoded — always derived from raw data.
- */
+// All stats computed from real JSON — never hardcoded
 function computeStats(submissions) {
-  if (!submissions || submissions.length === 0) {
-    return {
-      totalSubmissions: 0,
-      totalViews: 0,
-      totalEarnings: 0,
-      avgViewsPerSubmission: 0,
-      bestPlatform: 'N/A',
-      platformBreakdown: {},
-    };
-  }
+  if (!submissions?.length) return {
+    totalSubmissions: 0, totalViews: 0, totalEarnings: 0,
+    avgViews: 0, bestPlatform: 'N/A', platformBreakdown: {},
+    validated: 0, pending: 0, totalLikes: 0, totalComments: 0, totalShares: 0,
+  };
 
   const totalSubmissions = submissions.length;
-  const totalViews = submissions.reduce((sum, s) => sum + s.views, 0);
-  const totalEarnings = submissions.reduce((sum, s) => sum + s.earnings, 0);
-  const avgViewsPerSubmission = Math.round(totalViews / totalSubmissions);
+  const totalViews = submissions.reduce((s, x) => s + x.views, 0);
+  const totalEarnings = submissions.reduce((s, x) => s + x.earning_mad, 0); // real field name
+  const avgViews = Math.round(totalViews / totalSubmissions);
+  const validated = submissions.filter(x => x.status === 'validated').length;
+  const pending = submissions.filter(x => x.status === 'pending').length;
+  const totalLikes = submissions.reduce((s, x) => s + x.likes, 0);
+  const totalComments = submissions.reduce((s, x) => s + x.comments, 0);
+  const totalShares = submissions.reduce((s, x) => s + x.shares, 0);
 
-  // Best performing platform by total views
-  const platformViews = submissions.reduce((acc, s) => {
-    acc[s.platform] = (acc[s.platform] || 0) + s.views;
+  const platformBreakdown = submissions.reduce((acc, x) => {
+    acc[x.platform] = (acc[x.platform] || 0) + x.views;
     return acc;
   }, {});
 
-  const bestPlatform = Object.entries(platformViews).sort((a, b) => b[1] - a[1])[0]?.[0] || 'N/A';
+  const bestPlatform = Object.entries(platformBreakdown)
+    .sort((a, b) => b[1] - a[1])[0]?.[0] || 'N/A';
 
   return {
-    totalSubmissions,
-    totalViews,
-    totalEarnings,
-    avgViewsPerSubmission,
-    bestPlatform,
-    platformBreakdown: platformViews,
+    totalSubmissions, totalViews, totalEarnings, avgViews,
+    bestPlatform, platformBreakdown,
+    validated, pending,
+    totalLikes, totalComments, totalShares,
   };
 }

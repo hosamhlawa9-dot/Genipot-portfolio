@@ -7,9 +7,7 @@ export default function App() {
   return (
     <BrowserRouter>
       <Routes>
-        {/* Default redirect to demo creator */}
         <Route path="/" element={<Navigate to="/creators/creator_001" replace />} />
-        {/* Dynamic creator route */}
         <Route path="/creators/:creatorId" element={<CreatorPortfolio />} />
         <Route path="*" element={<NotFound />} />
       </Routes>

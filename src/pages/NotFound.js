@@ -9,7 +9,7 @@ export default function NotFound() {
       <h1 style={{ color: '#fff', fontSize: '1.5rem', fontWeight: 900 }}>Page Not Found</h1>
       <p style={{ color: '#6b7280' }}>This creator page doesn't exist.</p>
       <button onClick={() => navigate('/creators/creator_001')} style={{ background: '#aaff00', color: '#0D2E0D', padding: '0.8rem 2rem', borderRadius: '9999px', fontWeight: 900, border: 'none', cursor: 'pointer', marginTop: '1rem' }}>
-        Go to Demo Portfolio
+        Go to Portfolio
       </button>
     </div>
   );

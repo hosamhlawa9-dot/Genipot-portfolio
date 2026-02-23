@@ -7,31 +7,33 @@ import StatsTicker from '../components/StatsTicker';
 import PerformanceStats from '../components/PerformanceStats';
 import CampaignHistory from '../components/CampaignHistory';
 import TopSubmissions from '../components/TopSubmissions';
-import PortfolioModal from '../components/PortfolioModal';
 import { CTASection, Footer } from '../components/CTAAndFooter';
 import { LoadingState, ErrorState } from '../components/States';
+import PortfolioModal from '../components/PortfolioModal';
 
 export default function CreatorPortfolio() {
   const { creatorId } = useParams();
   const { creator, campaigns, submissions, stats, loading, error } = useCreatorData(creatorId);
-  const [showModal, setShowModal] = useState(false);
+  const [modalOpen, setModalOpen] = useState(false);
 
   if (loading) return <LoadingState />;
   if (error) return <ErrorState message={error} />;
 
   return (
-    <div style={{ minHeight: '100vh' }}>
-      <Navbar onWorkWithMe={() => setShowModal(true)} />
-      <HeroSection creator={creator} onWorkWithMe={() => setShowModal(true)} />
+    <div>
+      <Navbar
+        onWorkWithMe={() => {}}
+        onLogin={() => setModalOpen(true)}
+      />
+      <HeroSection creator={creator} onWorkWithMe={() => {}} />
       <StatsTicker stats={stats} campaigns={campaigns} />
       <PerformanceStats stats={stats} />
       <CampaignHistory campaigns={campaigns} submissions={submissions} />
       <TopSubmissions submissions={submissions} />
-      <CTASection creatorName={creator?.name} onWorkWithMe={() => setShowModal(true)} />
+      <CTASection creatorName={creator?.name} onWorkWithMe={() => {}} />
       <Footer />
 
-      {/* Portfolio creation modal */}
-      {showModal && <PortfolioModal onClose={() => setShowModal(false)} />}
+      <PortfolioModal isOpen={modalOpen} onClose={() => setModalOpen(false)} />
     </div>
   );
 }

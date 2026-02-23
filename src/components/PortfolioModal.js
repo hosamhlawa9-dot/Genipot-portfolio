@@ -1,342 +1,501 @@
 import React, { useState } from 'react';
 
-const NICHES = ['🌿 Lifestyle', '💄 Beauty', '🍔 Food & Drink', '👗 Fashion', '💻 Tech', '🎵 Music', '🏋️ Fitness', '✈️ Travel', '🎮 Gaming', '🏠 Home Decor'];
-const PLATFORMS = [
-  { name: 'TikTok', color: '#ff0050', icon: 'music_video' },
-  { name: 'Instagram', color: '#c13584', icon: 'photo_camera' },
-  { name: 'YouTube', color: '#ff0000', icon: 'play_circle' },
-];
-const AGES = ['Gen Z', 'Millennials', 'Gen X'];
-const GENDERS = ['Mixed', 'Female', 'Male'];
-
-const F = '#0D2E0D';
+// ─── COLORS ───────────────────────────────────────────────
 const LIME = '#aaff00';
+const FOREST = '#0D2E0D';
+const DARK = '#1a1a0a';
+const CARD = '#242c14';
+const SLATE = '#1e2a1e';
+const SLATE2 = '#2a3a2a';
 
-const s = {
-  overlay: {
-    position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.78)',
-    backdropFilter: 'blur(6px)', zIndex: 999,
-    display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1rem',
-  },
-  modal: {
-    background: '#1c1c1c', borderRadius: '1.2rem', width: '100%',
-    maxWidth: '560px', overflow: 'hidden',
-    boxShadow: '0 40px 80px rgba(0,0,0,0.6)',
-    border: '1px solid rgba(255,255,255,0.08)',
-    maxHeight: '92vh', overflowY: 'auto',
-  },
-  accentBar: { height: '5px', background: F, width: '100%' },
-  body: { padding: '2rem 2.5rem 2.5rem' },
-  headerPill: {
-    display: 'inline-flex', alignItems: 'center', gap: '0.4rem',
-    background: F, color: LIME,
-    padding: '0.35rem 1rem', borderRadius: '9999px',
-    fontSize: '0.65rem', fontWeight: 900, textTransform: 'uppercase',
-    letterSpacing: '0.1em', marginBottom: '1rem',
-  },
-  modalTitle: { color: '#fff', fontSize: '1.8rem', fontWeight: 900, textAlign: 'center', marginBottom: '0.3rem' },
-  modalSub: { color: '#6b7280', fontSize: '0.85rem', textAlign: 'center', marginBottom: '1.8rem' },
-  stepper: { display: 'flex', alignItems: 'center', gap: '0', marginBottom: '2rem' },
-  stepWrap: { flex: 1, display: 'flex', flexDirection: 'column', gap: '0.4rem' },
-  stepBar: (active, done) => ({
-    height: '5px', borderRadius: '9999px',
-    background: active || done ? F : '#2a2a2a',
-    transition: 'background 0.3s',
-  }),
-  stepLabel: (active) => ({
-    fontSize: '0.6rem', fontWeight: 700, textTransform: 'uppercase',
-    letterSpacing: '0.1em', color: active ? '#fff' : '#4b5563',
-    transition: 'color 0.3s',
-  }),
-  stepGap: { width: '0.8rem' },
-  avatarWrap: { display: 'flex', justifyContent: 'center', marginBottom: '1.5rem' },
-  avatarCircle: {
-    width: '90px', height: '90px', borderRadius: '50%',
-    border: `2px dashed ${F}`, display: 'flex', flexDirection: 'column',
-    alignItems: 'center', justifyContent: 'center',
-    background: 'rgba(13,46,13,0.1)', cursor: 'pointer',
-    transition: 'background 0.2s',
-  },
-  formGroup: { display: 'flex', flexDirection: 'column', gap: '0.4rem', marginBottom: '1.2rem' },
-  label: { color: '#9ca3af', fontSize: '0.65rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em', paddingLeft: '0.5rem' },
-  input: {
-    background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.1)',
-    borderRadius: '9999px', padding: '0.85rem 1.3rem',
-    color: '#fff', fontSize: '0.9rem', outline: 'none', width: '100%',
-    fontFamily: 'Inter, sans-serif',
-  },
-  textarea: {
-    background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.1)',
-    borderRadius: '1rem', padding: '0.85rem 1.3rem',
-    color: '#fff', fontSize: '0.9rem', outline: 'none', width: '100%',
-    resize: 'none', fontFamily: 'Inter, sans-serif',
-  },
-  handleWrap: {
-    display: 'flex', alignItems: 'center',
-    background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.1)',
-    borderRadius: '9999px', overflow: 'hidden',
-  },
-  handlePrefix: { color: '#4b5563', fontSize: '0.85rem', padding: '0.85rem 0 0.85rem 1.3rem', whiteSpace: 'nowrap' },
-  handleInput: {
-    flex: 1, background: 'transparent', border: 'none', outline: 'none',
-    color: '#fff', fontSize: '0.9rem', padding: '0.85rem 1.3rem 0.85rem 0.3rem',
-    fontFamily: 'Inter, sans-serif',
-  },
-  footer: {
-    display: 'flex', justifyContent: 'space-between', alignItems: 'center',
-    paddingTop: '1.5rem', marginTop: '0.5rem',
-    borderTop: '1px solid rgba(255,255,255,0.06)',
-  },
-  draftBtn: { background: 'none', border: 'none', color: '#6b7280', fontSize: '0.85rem', fontWeight: 600, cursor: 'pointer', textDecoration: 'underline' },
-  continueBtn: {
-    background: F, color: '#fff', padding: '0.8rem 2rem',
-    borderRadius: '9999px', fontWeight: 900, fontSize: '0.9rem',
-    border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.5rem',
-    transition: 'transform 0.15s',
-  },
-  backBtn: { background: 'none', border: 'none', color: '#6b7280', fontSize: '0.85rem', fontWeight: 600, cursor: 'pointer' },
-  nicheGrid: { display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '0.6rem', marginBottom: '1.5rem' },
-  nichePill: (active) => ({
-    padding: '0.6rem 0.5rem', borderRadius: '9999px', textAlign: 'center',
-    border: active ? `1.5px solid ${F}` : '1.5px solid rgba(255,255,255,0.1)',
-    background: active ? LIME : 'transparent', color: active ? F : '#9ca3af',
-    fontWeight: 700, fontSize: '0.75rem', cursor: 'pointer', transition: 'all 0.15s',
-  }),
-  toggleGroup: { display: 'flex', gap: '0.5rem', flexWrap: 'wrap' },
-  togglePill: (active) => ({
-    padding: '0.4rem 1rem', borderRadius: '9999px',
-    border: active ? `1.5px solid ${F}` : '1.5px solid rgba(255,255,255,0.1)',
-    background: active ? LIME : 'transparent', color: active ? F : '#9ca3af',
-    fontWeight: 700, fontSize: '0.75rem', cursor: 'pointer', transition: 'all 0.15s',
-  }),
-  platformRow: {
-    display: 'flex', alignItems: 'center', gap: '0.8rem',
-    marginBottom: '0.8rem', padding: '0.8rem 1rem',
-    background: 'rgba(255,255,255,0.03)', borderRadius: '1rem',
-    border: '1px solid rgba(255,255,255,0.06)',
-  },
-  platformInputs: { flex: 1, display: 'flex', gap: '0.6rem' },
-  smallInput: {
-    flex: 1, background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.1)',
-    borderRadius: '9999px', padding: '0.55rem 1rem', color: '#fff', fontSize: '0.8rem',
-    outline: 'none', fontFamily: 'Inter, sans-serif',
-  },
-  successWrap: { display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', padding: '1rem 0' },
-  checkCircle: {
-    width: '80px', height: '80px', borderRadius: '50%', background: F,
-    display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '1.5rem',
-  },
-  urlCard: {
-    background: 'rgba(255,255,255,0.05)', borderRadius: '0.75rem', border: '1px solid rgba(255,255,255,0.1)',
-    padding: '0.8rem 1.2rem', display: 'flex', alignItems: 'center',
-    justifyContent: 'space-between', width: '100%', marginBottom: '1.5rem',
-  },
-  closeBtn: {
-    position: 'absolute', top: '1rem', right: '1rem',
-    width: '32px', height: '32px', borderRadius: '50%',
-    background: 'rgba(255,255,255,0.1)', border: 'none', cursor: 'pointer',
-    color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center',
-  },
-};
+// ─── NICHES ───────────────────────────────────────────────
+const NICHES = [
+  { label: 'Lifestyle', icon: 'favorite' },
+  { label: 'Beauty', icon: 'flare' },
+  { label: 'Tech', icon: 'devices' },
+  { label: 'Gaming', icon: 'sports_esports' },
+  { label: 'Fashion', icon: 'checkroom' },
+  { label: 'Fitness', icon: 'fitness_center' },
+  { label: 'Travel', icon: 'flight' },
+  { label: 'Food', icon: 'restaurant' },
+  { label: 'Finance', icon: 'payments' },
+];
 
-export default function PortfolioModal({ onClose }) {
-  const [step, setStep] = useState(1);
-  const [selectedNiches, setSelectedNiches] = useState([]);
-  const [selectedAge, setSelectedAge] = useState('Gen Z');
-  const [selectedGender, setSelectedGender] = useState('Mixed');
+const AGE_GROUPS = ['Gen Z', 'Millennials', 'Gen X', 'Alpha'];
+const GENDERS = ['Mixed', 'Female', 'Male', 'Non-binary'];
 
-  const toggleNiche = (n) => setSelectedNiches((prev) =>
-    prev.includes(n) ? prev.filter((x) => x !== n) : [...prev, n]
+const PLATFORMS = [
+  { key: 'tiktok', label: 'TikTok', icon: 'music_note', color: '#000', placeholder: '@username', followerLabel: 'Followers' },
+  { key: 'instagram', label: 'Instagram', icon: 'photo_camera', gradient: 'linear-gradient(135deg, #f9ce34, #ee2a7b, #6228d7)', placeholder: '@username', followerLabel: 'Followers' },
+  { key: 'youtube', label: 'YouTube Channel', icon: 'play_arrow', color: '#FF0000', placeholder: 'Channel name', followerLabel: 'Subscribers' },
+];
+
+// ─── STEPPER BAR ──────────────────────────────────────────
+function StepBar({ step }) {
+  const steps = ['Identity', 'Niche', 'Platforms', 'Done'];
+  return (
+    <div style={{ padding: '1.5rem 2rem 0.5rem' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem' }}>
+        <span style={{ color: LIME, fontSize: '0.7rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em' }}>
+          Step {step} of 3
+        </span>
+        <span style={{ color: LIME, fontWeight: 900, fontSize: '0.8rem' }}>
+          {steps[step - 1]}
+        </span>
+      </div>
+      <div style={{ display: 'flex', gap: '6px' }}>
+        {[1, 2, 3].map(i => (
+          <div key={i} style={{
+            flex: 1, height: '6px', borderRadius: '9999px',
+            background: i <= step ? LIME : 'rgba(170,255,0,0.15)',
+            transition: 'background 0.4s',
+          }} />
+        ))}
+      </div>
+    </div>
   );
+}
 
-  const steps = ['Identity', 'Your Niche', 'Platforms'];
+// ─── STEP 1 — IDENTITY ────────────────────────────────────
+function Step1({ data, onChange }) {
+  return (
+    <div style={{ padding: '1.5rem 2rem' }}>
+      <h1 style={{ fontSize: '1.8rem', fontWeight: 900, color: '#fff', marginBottom: '0.3rem', letterSpacing: '-0.03em' }}>
+        Build Your Portfolio
+      </h1>
+      <p style={{ color: 'rgba(255,255,255,0.45)', fontSize: '0.85rem', marginBottom: '1.5rem' }}>
+        Let's start with your basic identity and brand.
+      </p>
+
+      {/* Avatar upload */}
+      <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '1.5rem' }}>
+        <div style={{ position: 'relative', cursor: 'pointer' }}>
+          <div style={{
+            width: '96px', height: '96px', borderRadius: '50%',
+            border: `2px dashed ${LIME}`, background: 'rgba(170,255,0,0.05)',
+            display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
+          }}>
+            <span className="material-symbols-outlined" style={{ color: LIME, fontSize: '1.8rem' }}>add_a_photo</span>
+            <span style={{ color: LIME, fontSize: '0.55rem', fontWeight: 700, marginTop: '2px' }}>UPLOAD</span>
+          </div>
+          <div style={{
+            position: 'absolute', bottom: '-2px', right: '-2px',
+            width: '28px', height: '28px', borderRadius: '50%',
+            background: LIME, border: `3px solid ${CARD}`,
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+          }}>
+            <span className="material-symbols-outlined" style={{ color: FOREST, fontSize: '0.9rem' }}>edit</span>
+          </div>
+        </div>
+      </div>
+
+      {/* Fields */}
+      {[
+        { key: 'name', label: 'Creator Name', placeholder: 'e.g. Yassine El Idrissi', icon: null },
+        { key: 'location', label: 'Location', placeholder: 'e.g. Ouarzazate, Morocco', icon: 'location_on' },
+      ].map(f => (
+        <div key={f.key} style={{ marginBottom: '1rem' }}>
+          <label style={{ display: 'block', color: 'rgba(255,255,255,0.5)', fontSize: '0.65rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '0.4rem', paddingLeft: '1rem' }}>
+            {f.label}
+          </label>
+          <div style={{ position: 'relative' }}>
+            {f.icon && <span className="material-symbols-outlined" style={{ position: 'absolute', left: '1rem', top: '50%', transform: 'translateY(-50%)', color: 'rgba(255,255,255,0.3)', fontSize: '1.1rem' }}>{f.icon}</span>}
+            <input
+              value={data[f.key] || ''}
+              onChange={e => onChange(f.key, e.target.value)}
+              placeholder={f.placeholder}
+              style={{
+                width: '100%', background: 'rgba(255,255,255,0.06)',
+                border: '1px solid rgba(255,255,255,0.1)',
+                borderRadius: '9999px', padding: `0.8rem ${f.icon ? '1rem 0.8rem 2.5rem' : '1rem 1.5rem'}`,
+                color: '#fff', fontSize: '0.9rem', outline: 'none',
+                boxSizing: 'border-box',
+              }}
+            />
+          </div>
+        </div>
+      ))}
+
+      {/* Username field with prefix */}
+      <div style={{ marginBottom: '1rem' }}>
+        <label style={{ display: 'block', color: 'rgba(255,255,255,0.5)', fontSize: '0.65rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '0.4rem', paddingLeft: '1rem' }}>
+          Username / Handle
+        </label>
+        <div style={{ display: 'flex', alignItems: 'center', background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '9999px', overflow: 'hidden' }}>
+          <span style={{ paddingLeft: '1.5rem', color: 'rgba(255,255,255,0.3)', fontSize: '0.85rem', whiteSpace: 'nowrap' }}>geniepot.ma/</span>
+          <input
+            value={data.username || ''}
+            onChange={e => onChange('username', e.target.value)}
+            placeholder="username"
+            style={{ flex: 1, background: 'transparent', border: 'none', padding: '0.8rem 1rem 0.8rem 0.2rem', color: '#fff', fontSize: '0.9rem', outline: 'none' }}
+          />
+        </div>
+      </div>
+
+      {/* Bio */}
+      <div style={{ marginBottom: '1rem' }}>
+        <label style={{ display: 'block', color: 'rgba(255,255,255,0.5)', fontSize: '0.65rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '0.4rem', paddingLeft: '1rem' }}>
+          Short Bio
+        </label>
+        <textarea
+          value={data.bio || ''}
+          onChange={e => onChange('bio', e.target.value)}
+          placeholder="Tell brands about your niche and personality..."
+          rows={3}
+          style={{
+            width: '100%', background: 'rgba(255,255,255,0.06)',
+            border: '1px solid rgba(255,255,255,0.1)',
+            borderRadius: '1.2rem', padding: '0.9rem 1.5rem',
+            color: '#fff', fontSize: '0.9rem', outline: 'none',
+            resize: 'none', boxSizing: 'border-box',
+          }}
+        />
+      </div>
+    </div>
+  );
+}
+
+// ─── STEP 2 — NICHE ───────────────────────────────────────
+function Step2({ data, onChange }) {
+  const toggle = (arr, val) => arr.includes(val) ? arr.filter(x => x !== val) : [...arr, val];
 
   return (
-    <div style={s.overlay} onClick={(e) => e.target === e.currentTarget && onClose()}>
-      <div style={{ ...s.modal, position: 'relative' }}>
-        {/* Close btn */}
-        <button style={s.closeBtn} onClick={onClose}>
-          <span className="material-symbols-outlined" style={{ fontSize: '1rem' }}>close</span>
-        </button>
+    <div style={{ padding: '1.5rem 2rem' }}>
+      <h1 style={{ fontSize: '1.6rem', fontWeight: 900, color: '#fff', marginBottom: '1.2rem', letterSpacing: '-0.03em' }}>
+        What content do you create?
+      </h1>
 
-        {/* Top accent bar */}
-        <div style={s.accentBar} />
+      {/* Niche grid */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '0.6rem', marginBottom: '1.5rem' }}>
+        {NICHES.map(n => {
+          const selected = (data.niches || []).includes(n.label);
+          return (
+            <button key={n.label}
+              onClick={() => onChange('niches', toggle(data.niches || [], n.label))}
+              style={{
+                display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.4rem',
+                padding: '0.7rem 0.5rem', borderRadius: '9999px', cursor: 'pointer',
+                border: selected ? 'none' : '1px solid rgba(170,255,0,0.2)',
+                background: selected ? LIME : 'transparent',
+                color: selected ? FOREST : 'rgba(255,255,255,0.6)',
+                fontWeight: selected ? 700 : 500, fontSize: '0.8rem',
+                transition: 'all 0.2s',
+              }}>
+              <span className="material-symbols-outlined" style={{ fontSize: '1rem' }}>{n.icon}</span>
+              {n.label}
+            </button>
+          );
+        })}
+      </div>
 
-        <div style={s.body}>
-          {/* Header */}
-          <div style={{ textAlign: 'center' }}>
-            <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '0.8rem' }}>
-              <div style={s.headerPill}>
-                <span className="material-symbols-outlined" style={{ fontSize: '0.9rem' }}>auto_awesome</span>
-                Creator Profile Setup
-              </div>
+      {/* Target audience */}
+      <h3 style={{ fontSize: '1rem', fontWeight: 700, color: '#fff', marginBottom: '1rem' }}>Your Target Audience</h3>
+
+      {/* Age */}
+      <label style={{ display: 'block', color: 'rgba(170,255,0,0.5)', fontSize: '0.65rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '0.6rem' }}>Age Group</label>
+      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem', marginBottom: '1.2rem' }}>
+        {AGE_GROUPS.map(a => {
+          const sel = (data.ageGroups || []).includes(a);
+          return (
+            <button key={a} onClick={() => onChange('ageGroups', toggle(data.ageGroups || [], a))} style={{
+              padding: '0.4rem 1.2rem', borderRadius: '9999px', cursor: 'pointer',
+              border: sel ? 'none' : '1px solid rgba(170,255,0,0.2)',
+              background: sel ? LIME : 'transparent',
+              color: sel ? FOREST : 'rgba(255,255,255,0.6)',
+              fontWeight: sel ? 700 : 500, fontSize: '0.82rem', transition: 'all 0.2s',
+            }}>{a}</button>
+          );
+        })}
+      </div>
+
+      {/* Gender */}
+      <label style={{ display: 'block', color: 'rgba(170,255,0,0.5)', fontSize: '0.65rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '0.6rem' }}>Gender Focus</label>
+      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
+        {GENDERS.map(g => {
+          const sel = (data.genders || []).includes(g);
+          return (
+            <button key={g} onClick={() => onChange('genders', toggle(data.genders || [], g))} style={{
+              padding: '0.4rem 1.2rem', borderRadius: '9999px', cursor: 'pointer',
+              border: sel ? 'none' : '1px solid rgba(170,255,0,0.2)',
+              background: sel ? LIME : 'transparent',
+              color: sel ? FOREST : 'rgba(255,255,255,0.6)',
+              fontWeight: sel ? 700 : 500, fontSize: '0.82rem', transition: 'all 0.2s',
+            }}>{g}</button>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+// ─── STEP 3 — PLATFORMS ───────────────────────────────────
+function Step3({ data, onChange }) {
+  const [isPublic, setIsPublic] = useState(true);
+
+  return (
+    <div style={{ padding: '1.5rem 2rem' }}>
+      <h1 style={{ fontSize: '1.6rem', fontWeight: 900, color: '#fff', marginBottom: '1.2rem', letterSpacing: '-0.03em' }}>
+        Where do you create?
+      </h1>
+
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '0.8rem', marginBottom: '1.2rem' }}>
+        {PLATFORMS.map(p => (
+          <div key={p.key} style={{
+            background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)',
+            borderRadius: '1rem', padding: '1rem 1.2rem',
+            display: 'flex', alignItems: 'center', gap: '1rem',
+          }}>
+            {/* Platform icon */}
+            <div style={{
+              width: '44px', height: '44px', borderRadius: '50%', flexShrink: 0,
+              background: p.gradient || p.color,
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+            }}>
+              <span className="material-symbols-outlined" style={{ color: '#fff', fontSize: '1.3rem' }}>{p.icon}</span>
             </div>
-            <h2 style={s.modalTitle}>Build Your Portfolio</h2>
-            <p style={s.modalSub}>Let brands discover you — set up your public creator page in minutes.</p>
+
+            {/* Handle input */}
+            <div style={{ flex: 1 }}>
+              <label style={{ display: 'block', color: 'rgba(255,255,255,0.35)', fontSize: '0.6rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: '0.2rem' }}>
+                {p.label}
+              </label>
+              <input
+                value={(data.platforms || {})[p.key]?.handle || ''}
+                onChange={e => onChange('platforms', { ...data.platforms, [p.key]: { ...(data.platforms?.[p.key] || {}), handle: e.target.value } })}
+                placeholder={p.placeholder}
+                style={{ background: 'transparent', border: 'none', color: '#fff', fontSize: '0.95rem', fontWeight: 600, outline: 'none', width: '100%' }}
+              />
+            </div>
+
+            {/* Divider */}
+            <div style={{ width: '1px', height: '36px', background: 'rgba(255,255,255,0.1)' }} />
+
+            {/* Followers input */}
+            <div style={{ width: '100px' }}>
+              <label style={{ display: 'block', color: 'rgba(255,255,255,0.35)', fontSize: '0.6rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: '0.2rem' }}>
+                {p.followerLabel}
+              </label>
+              <input
+                value={(data.platforms || {})[p.key]?.followers || ''}
+                onChange={e => onChange('platforms', { ...data.platforms, [p.key]: { ...(data.platforms?.[p.key] || {}), followers: e.target.value } })}
+                placeholder="e.g. 50K"
+                style={{ background: 'transparent', border: 'none', color: '#fff', fontSize: '0.9rem', fontWeight: 600, outline: 'none', width: '100%' }}
+              />
+            </div>
           </div>
+        ))}
+      </div>
 
-          {/* Stepper — only show during steps 1-3 */}
-          {step <= 3 && (
-            <div style={s.stepper}>
-              {steps.map((label, i) => (
-                <React.Fragment key={label}>
-                  <div style={s.stepWrap}>
-                    <div style={s.stepBar(step === i + 1, step > i + 1)} />
-                    <span style={s.stepLabel(step === i + 1)}>{i + 1}. {label}</span>
-                  </div>
-                  {i < steps.length - 1 && <div style={s.stepGap} />}
-                </React.Fragment>
-              ))}
-            </div>
-          )}
-
-          {/* STEP 1: Identity */}
-          {step === 1 && (
-            <>
-              <div style={s.avatarWrap}>
-                <div style={s.avatarCircle}>
-                  <span className="material-symbols-outlined" style={{ color: F, fontSize: '1.8rem' }}>add_a_photo</span>
-                  <span style={{ color: F, fontSize: '0.6rem', fontWeight: 900, marginTop: '0.2rem' }}>UPLOAD</span>
-                </div>
-              </div>
-
-              <div style={s.formGroup}>
-                <label style={s.label}>Creator Name</label>
-                <input style={s.input} type="text" placeholder="e.g. Yasmine El Idrissi" />
-              </div>
-
-              <div style={s.formGroup}>
-                <label style={s.label}>Username / Handle</label>
-                <div style={s.handleWrap}>
-                  <span style={s.handlePrefix}>geniepot.ma/</span>
-                  <input style={s.handleInput} type="text" placeholder="username" />
-                </div>
-              </div>
-
-              <div style={s.formGroup}>
-                <label style={s.label}>Location</label>
-                <div style={{ position: 'relative' }}>
-                  <span className="material-symbols-outlined" style={{ position: 'absolute', left: '1rem', top: '50%', transform: 'translateY(-50%)', color: '#4b5563', fontSize: '1.1rem' }}>location_on</span>
-                  <input style={{ ...s.input, paddingLeft: '2.8rem' }} type="text" placeholder="e.g. Casablanca, Morocco" />
-                </div>
-              </div>
-
-              <div style={s.formGroup}>
-                <label style={s.label}>Short Bio</label>
-                <div style={{ position: 'relative' }}>
-                  <textarea style={s.textarea} rows={3} placeholder="Tell brands about your niche and personality..." maxLength={160} />
-                  <span style={{ position: 'absolute', bottom: '0.5rem', right: '1rem', fontSize: '0.65rem', color: '#4b5563' }}>0 / 160</span>
-                </div>
-              </div>
-
-              <div style={s.footer}>
-                <button style={s.draftBtn}>Save as Draft</button>
-                <button style={s.continueBtn} onClick={() => setStep(2)}>
-                  Continue <span className="material-symbols-outlined" style={{ fontSize: '1rem' }}>arrow_forward</span>
-                </button>
-              </div>
-            </>
-          )}
-
-          {/* STEP 2: Niche */}
-          {step === 2 && (
-            <>
-              <p style={{ color: '#fff', fontWeight: 700, fontSize: '1rem', marginBottom: '0.3rem' }}>What content do you create?</p>
-              <p style={{ color: '#6b7280', fontSize: '0.8rem', marginBottom: '1.2rem' }}>Select all that apply</p>
-
-              <div style={s.nicheGrid}>
-                {NICHES.map((n) => (
-                  <button key={n} style={s.nichePill(selectedNiches.includes(n))} onClick={() => toggleNiche(n)}>{n}</button>
-                ))}
-              </div>
-
-              <div style={s.formGroup}>
-                <label style={s.label}>Target Age Group</label>
-                <div style={s.toggleGroup}>
-                  {AGES.map((a) => (
-                    <button key={a} style={s.togglePill(selectedAge === a)} onClick={() => setSelectedAge(a)}>{a}</button>
-                  ))}
-                </div>
-              </div>
-
-              <div style={s.formGroup}>
-                <label style={s.label}>Gender Focus</label>
-                <div style={s.toggleGroup}>
-                  {GENDERS.map((g) => (
-                    <button key={g} style={s.togglePill(selectedGender === g)} onClick={() => setSelectedGender(g)}>{g}</button>
-                  ))}
-                </div>
-              </div>
-
-              <div style={s.footer}>
-                <button style={s.backBtn} onClick={() => setStep(1)}>← Back</button>
-                <button style={s.continueBtn} onClick={() => setStep(3)}>
-                  Continue <span className="material-symbols-outlined" style={{ fontSize: '1rem' }}>arrow_forward</span>
-                </button>
-              </div>
-            </>
-          )}
-
-          {/* STEP 3: Platforms */}
-          {step === 3 && (
-            <>
-              <p style={{ color: '#fff', fontWeight: 700, fontSize: '1rem', marginBottom: '0.3rem' }}>Where do you create?</p>
-              <p style={{ color: '#6b7280', fontSize: '0.8rem', marginBottom: '1.2rem' }}>Add your social platforms and follower counts</p>
-
-              {PLATFORMS.map((p) => (
-                <div key={p.name} style={s.platformRow}>
-                  <span className="material-symbols-outlined" style={{ color: p.color, fontSize: '1.5rem' }}>{p.icon}</span>
-                  <div style={s.platformInputs}>
-                    <input style={s.smallInput} type="text" placeholder={`@${p.name.toLowerCase()}_handle`} />
-                    <input style={s.smallInput} type="text" placeholder="Followers" />
-                  </div>
-                </div>
-              ))}
-
-              <div style={{ ...s.platformRow, border: '1.5px dashed rgba(255,255,255,0.1)', justifyContent: 'center', cursor: 'pointer' }}>
-                <span className="material-symbols-outlined" style={{ color: F, fontSize: '1.2rem' }}>add_circle</span>
-                <span style={{ color: '#6b7280', fontSize: '0.85rem', fontWeight: 600 }}>Add another platform</span>
-              </div>
-
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: '1.5rem', padding: '1rem', background: 'rgba(255,255,255,0.03)', borderRadius: '0.75rem' }}>
-                <span style={{ color: '#9ca3af', fontSize: '0.85rem', fontWeight: 600 }}>Make portfolio public immediately</span>
-                <div style={{ width: '44px', height: '24px', background: F, borderRadius: '9999px', position: 'relative', cursor: 'pointer' }}>
-                  <div style={{ position: 'absolute', right: '3px', top: '3px', width: '18px', height: '18px', borderRadius: '50%', background: LIME }} />
-                </div>
-              </div>
-
-              <div style={s.footer}>
-                <button style={s.backBtn} onClick={() => setStep(2)}>← Back</button>
-                <button style={{ ...s.continueBtn, padding: '0.9rem 2.2rem' }} onClick={() => setStep(4)}>
-                  🚀 Launch My Portfolio
-                </button>
-              </div>
-            </>
-          )}
-
-          {/* STEP 4: Success */}
-          {step === 4 && (
-            <div style={s.successWrap}>
-              <div style={s.checkCircle}>
-                <span className="material-symbols-outlined" style={{ color: LIME, fontSize: '2.5rem', fontWeight: 700 }}>check_circle</span>
-              </div>
-              <h3 style={{ color: '#fff', fontSize: '1.5rem', fontWeight: 900, marginBottom: '0.5rem' }}>Your Portfolio is Live! 🎉</h3>
-              <p style={{ color: '#6b7280', fontSize: '0.9rem', marginBottom: '1.5rem' }}>Share your page with brands and start getting discovered.</p>
-
-              <div style={s.urlCard}>
-                <span style={{ color: '#9ca3af', fontSize: '0.85rem', fontWeight: 600 }}>geniepot.ma/creators/your_handle</span>
-                <span className="material-symbols-outlined" style={{ color: F, fontSize: '1.1rem', cursor: 'pointer' }}>content_copy</span>
-              </div>
-
-              <button style={{ ...s.continueBtn, width: '100%', justifyContent: 'center', marginBottom: '0.75rem' }}>
-                View My Portfolio →
-              </button>
-              <button style={{ background: 'transparent', border: `1.5px solid rgba(255,255,255,0.15)`, color: '#fff', padding: '0.8rem 2rem', borderRadius: '9999px', fontWeight: 700, fontSize: '0.9rem', cursor: 'pointer', width: '100%' }}>
-                Share on Instagram
-              </button>
-            </div>
-          )}
+      {/* Public toggle */}
+      <div style={{
+        display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+        padding: '0.9rem 1.2rem', background: 'rgba(170,255,0,0.05)',
+        borderRadius: '1rem', border: '1px solid rgba(170,255,0,0.1)',
+      }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
+          <span className="material-symbols-outlined" style={{ color: LIME, fontSize: '1.2rem' }}>public</span>
+          <span style={{ color: '#fff', fontWeight: 500, fontSize: '0.9rem' }}>Make my portfolio public immediately</span>
         </div>
+        {/* Toggle switch */}
+        <div
+          onClick={() => setIsPublic(!isPublic)}
+          style={{
+            width: '44px', height: '24px', borderRadius: '9999px', cursor: 'pointer',
+            background: isPublic ? LIME : 'rgba(255,255,255,0.15)',
+            position: 'relative', transition: 'background 0.3s', flexShrink: 0,
+          }}>
+          <div style={{
+            position: 'absolute', top: '2px',
+            left: isPublic ? '22px' : '2px',
+            width: '20px', height: '20px', borderRadius: '50%',
+            background: isPublic ? FOREST : '#fff',
+            transition: 'left 0.3s',
+          }} />
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ─── STEP 4 — SUCCESS ─────────────────────────────────────
+function StepSuccess({ data, onClose }) {
+  const [copied, setCopied] = useState(false);
+  const url = `geniepot.ma/creators/${(data.username || 'your-username').toLowerCase().replace(/\s/g, '_')}`;
+
+  const handleCopy = () => {
+    navigator.clipboard?.writeText(url).catch(() => {});
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
+
+  return (
+    <div style={{ padding: '2.5rem 2rem', display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center' }}>
+      {/* Checkmark circle */}
+      <div style={{
+        width: '80px', height: '80px', borderRadius: '50%',
+        background: LIME, display: 'flex', alignItems: 'center', justifyContent: 'center',
+        marginBottom: '1.5rem', boxShadow: '0 0 40px rgba(170,255,0,0.35)',
+      }}>
+        <span className="material-symbols-outlined" style={{ color: FOREST, fontSize: '2.5rem', fontWeight: 700 }}>check</span>
+      </div>
+
+      <h1 style={{ fontSize: '1.8rem', fontWeight: 900, color: '#fff', marginBottom: '0.5rem', letterSpacing: '-0.03em' }}>
+        Your Portfolio is Live! 🎉
+      </h1>
+      <p style={{ color: 'rgba(255,255,255,0.5)', fontSize: '0.9rem', marginBottom: '2rem', lineHeight: 1.6, maxWidth: '340px' }}>
+        Share your page with brands and start getting collaborations today.
+      </p>
+
+      {/* URL copy card */}
+      <div style={{
+        width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+        background: 'rgba(255,255,255,0.05)', borderRadius: '9999px',
+        padding: '0.8rem 0.8rem 0.8rem 1.5rem', border: '1px solid rgba(255,255,255,0.1)',
+        marginBottom: '1.5rem', cursor: 'pointer',
+      }}>
+        <span style={{ color: LIME, fontWeight: 600, fontSize: '0.85rem', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', marginRight: '0.5rem' }}>
+          {url}
+        </span>
+        <button onClick={handleCopy} style={{
+          width: '38px', height: '38px', borderRadius: '50%', flexShrink: 0,
+          background: LIME, border: 'none', cursor: 'pointer',
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+        }}>
+          <span className="material-symbols-outlined" style={{ color: FOREST, fontSize: '1.1rem' }}>
+            {copied ? 'check' : 'content_copy'}
+          </span>
+        </button>
+      </div>
+
+      {/* Action buttons */}
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', width: '100%' }}>
+        <button onClick={onClose} style={{
+          width: '100%', background: LIME, color: FOREST,
+          padding: '1rem', borderRadius: '9999px', fontWeight: 900,
+          fontSize: '1rem', border: 'none', cursor: 'pointer',
+          display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem',
+        }}>
+          View My Portfolio
+          <span className="material-symbols-outlined" style={{ fontSize: '1.1rem' }}>arrow_forward</span>
+        </button>
+        <button style={{
+          width: '100%', background: 'transparent', color: '#fff',
+          padding: '1rem', borderRadius: '9999px', fontWeight: 700,
+          fontSize: '1rem', border: '2px solid rgba(255,255,255,0.2)', cursor: 'pointer',
+          display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem',
+        }}>
+          <span className="material-symbols-outlined" style={{ fontSize: '1.1rem' }}>share</span>
+          Share on Instagram
+        </button>
+      </div>
+
+      <p style={{ marginTop: '1.5rem', color: 'rgba(255,255,255,0.25)', fontSize: '0.8rem' }}>
+        Need help?{' '}
+        <span style={{ color: 'rgba(170,255,0,0.5)', textDecoration: 'underline', cursor: 'pointer' }}>Contact support</span>
+      </p>
+    </div>
+  );
+}
+
+// ─── MAIN MODAL ───────────────────────────────────────────
+export default function PortfolioModal({ isOpen, onClose }) {
+  const [step, setStep] = useState(1);
+  const [formData, setFormData] = useState({});
+
+  if (!isOpen) return null;
+
+  const handleChange = (key, val) => setFormData(prev => ({ ...prev, [key]: val }));
+
+  const handleNext = () => {
+    if (step < 3) setStep(s => s + 1);
+    else setStep(4); // success
+  };
+
+  const handleBack = () => setStep(s => s - 1);
+
+  const handleClose = () => {
+    setStep(1);
+    setFormData({});
+    onClose();
+  };
+
+  return (
+    <div style={{
+      position: 'fixed', inset: 0, zIndex: 999,
+      background: 'rgba(0,0,0,0.85)', backdropFilter: 'blur(8px)',
+      display: 'flex', alignItems: 'center', justifyContent: 'center',
+      padding: '1rem',
+    }}
+      onClick={e => e.target === e.currentTarget && handleClose()}
+    >
+      <div style={{
+        width: '100%', maxWidth: '560px',
+        background: CARD, borderRadius: '1.2rem',
+        border: '1px solid rgba(255,255,255,0.08)',
+        boxShadow: '0 40px 80px rgba(0,0,0,0.6)',
+        overflow: 'hidden', position: 'relative',
+        maxHeight: '90vh', display: 'flex', flexDirection: 'column',
+      }}>
+        {/* Lime top bar */}
+        <div style={{ height: '4px', background: LIME, flexShrink: 0 }} />
+
+        {/* Header */}
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '1.2rem 2rem 0', flexShrink: 0 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+            {/* Teapot logo */}
+            <img src="/logo.png" alt="Geniepot" style={{ height: '28px', width: 'auto' }} />
+          </div>
+          <button onClick={handleClose} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'rgba(255,255,255,0.4)', lineHeight: 1 }}>
+            <span className="material-symbols-outlined">close</span>
+          </button>
+        </div>
+
+        {/* Stepper — only for steps 1-3 */}
+        {step <= 3 && <StepBar step={step} />}
+
+        {/* Scrollable content */}
+        <div style={{ overflowY: 'auto', flex: 1 }}>
+          {step === 1 && <Step1 data={formData} onChange={handleChange} />}
+          {step === 2 && <Step2 data={formData} onChange={handleChange} />}
+          {step === 3 && <Step3 data={formData} onChange={handleChange} />}
+          {step === 4 && <StepSuccess data={formData} onClose={handleClose} />}
+        </div>
+
+        {/* Footer actions — only for steps 1-3 */}
+        {step <= 3 && (
+          <div style={{
+            flexShrink: 0, padding: '1.2rem 2rem',
+            borderTop: '1px solid rgba(255,255,255,0.08)',
+            display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+            background: 'rgba(0,0,0,0.2)',
+          }}>
+            {step > 1 ? (
+              <button onClick={handleBack} style={{
+                display: 'flex', alignItems: 'center', gap: '0.3rem',
+                background: 'none', border: 'none', cursor: 'pointer',
+                color: 'rgba(255,255,255,0.5)', fontWeight: 600, fontSize: '0.85rem',
+              }}>
+                <span className="material-symbols-outlined" style={{ fontSize: '1rem' }}>arrow_back</span>
+                Back
+              </button>
+            ) : (
+              <button style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'rgba(255,255,255,0.35)', fontSize: '0.8rem', textDecoration: 'underline' }}>
+                Save as Draft
+              </button>
+            )}
+
+            <button onClick={handleNext} style={{
+              background: LIME, color: FOREST,
+              padding: '0.75rem 2rem', borderRadius: '9999px',
+              fontWeight: 900, fontSize: '0.95rem', border: 'none', cursor: 'pointer',
+              display: 'flex', alignItems: 'center', gap: '0.4rem',
+              boxShadow: '0 8px 24px rgba(170,255,0,0.25)',
+            }}>
+              {step === 3 ? '🚀 Launch My Portfolio' : 'Continue'}
+              {step < 3 && <span className="material-symbols-outlined" style={{ fontSize: '1.1rem' }}>arrow_forward</span>}
+            </button>
+          </div>
+        )}
       </div>
     </div>
   );
